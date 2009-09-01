@@ -7,12 +7,12 @@ using System.Resources;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Requiro")]
-[assembly: AssemblyDescription("A directory size analyzing tool")]
+[assembly: AssemblyDescription("A directory size analysis tool.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Antoine Kalmbach")]
 [assembly: AssemblyProduct("Requiro")]
 [assembly: AssemblyCopyright("Copyright © Antoine Kalmbach 2009")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("Licensed under the BSD License.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -33,5 +33,5 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.2.211.2249")]
+[assembly: AssemblyVersion("0.1.215.2305")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

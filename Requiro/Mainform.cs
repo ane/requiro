@@ -28,7 +28,7 @@ namespace Requiro
         private void Mainform_Load(object sender, EventArgs e)
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            m_VersionLabel.Text += " " + version.Major + "." + version.Minor + " alpha (build " + version.Build + ")";
+            m_VersionLabel.Text += " v" + version.Major + "." + version.Minor + " (build " + version.Build + ")";
             this.Text = String.Format("Requiro v{0}.{1}.{2}", version.Major, version.Minor, version.Build); 
         }
 
