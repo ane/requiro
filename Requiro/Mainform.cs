@@ -39,6 +39,8 @@ namespace Requiro
 
         private void m_AnalyzeButton_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(m_PathBox.Text))
+                return;
             if (m_AnalyzeButton.Text == "Stop" && bgWorker.IsBusy)
             {
                 bgWorker.CancelAsync();
@@ -101,18 +103,26 @@ namespace Requiro
                         totalSize += size;
                     }
                 }
+  
                 m_StatusLabel.Text = "Analysis complete. Processed a total of " + m_DirectorySizes.Count.ToString() + " directories ";
                 String secs = String.Format("{0}.{1:##}", m_Stopwatch.Elapsed.Seconds, m_Stopwatch.Elapsed.Milliseconds);
                 m_StatusLabel.Text += "in " + secs + " seconds.";
                 m_AnalyzeButton.Text = "Start analysis";
+                // Set directory info
+                string root = Directory.GetDirectoryRoot(m_PathBox.Text);
                 m_PathLabel.Text = "Info for " + m_PathBox.Text;
+                m_DriveInfoLabel.Text = "Info for " + root;
                 m_SubfoldersCount.Text = String.Format("{0} ({1} shown)", m_DirectorySizes.Count, m_FileList.Items.Count);
                 m_SizeCount.Text = FormatBytes(totalSize);
-                string root = Directory.GetDirectoryRoot(m_PathBox.Text);
-                foreach (DriveInfo di in DriveInfo.GetDrives())
-                    if (di.Name == root)
-                        m_UsagePercent.Text = String.Format("{0:P} of {1}, {2} available ({3:P})", (float)totalSize / di.TotalSize, FormatBytes(di.TotalSize), 
-                            FormatBytes(di.AvailableFreeSpace), (float)di.AvailableFreeSpace / di.TotalSize);
+                // Check if the root matches to the drives in the system (meaning it's a valid drive)
+                foreach (DriveInfo di in (from drive in DriveInfo.GetDrives() where drive.Name.Equals(root) select drive))
+                {
+                    m_UsagePercent.Text = String.Format("{0:P} of used space", (float)totalSize / (di.TotalSize - di.AvailableFreeSpace),
+                        FormatBytes(di.TotalSize - di.AvailableFreeSpace), FormatBytes(di.AvailableFreeSpace), di.Name);
+                    m_DriveSize.Text = FormatBytes(di.TotalSize);
+                    m_AvailableSpace.Text = FormatBytes(di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)di.AvailableFreeSpace / di.TotalSize);
+                    m_UsedSpace.Text = FormatBytes(di.TotalSize - di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)(di.TotalSize - di.AvailableFreeSpace) / di.TotalSize);
+                }
                 m_DirectorySizes.Clear();
                 DrawPiechart();
             }
@@ -219,7 +229,7 @@ namespace Requiro
 
         private void DrawPiechart()
         {
-            m_PieChart.Refresh();
+            m_PieChart.Invalidate();
         }
 
         Color[] GetColorArray()
@@ -248,6 +258,8 @@ namespace Requiro
 
         private void m_PieChart_Paint(object sender, PaintEventArgs e)
         {
+            PictureBox pb = sender as PictureBox;
+          
             Graphics g = e.Graphics;
             
 
