@@ -29,6 +29,7 @@ namespace Requiro
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             m_VersionLabel.Text += " " + version.Major + "." + version.Minor + " alpha (build " + version.Build + ")";
+            this.Text = String.Format("Requiro v{0}.{1}.{2}", version.Major, version.Minor, version.Build); 
         }
 
         private void m_BrowseButton_Click(object sender, EventArgs e)
@@ -38,6 +39,11 @@ namespace Requiro
         }
 
         private void m_AnalyzeButton_Click(object sender, EventArgs e)
+        {
+            StartSearch();
+        }
+
+        private void StartSearch()
         {
             if (!Directory.Exists(m_PathBox.Text))
                 return;
@@ -76,65 +82,91 @@ namespace Requiro
             }
             else
             {
-                List<string> subfolders = new List<string>();
-                long totalSize = 0;
-                foreach (KeyValuePair<string, long> kvp in m_DirectorySizes)
+                AddParentDirectoryItem();
+                if (m_DirectorySizes.Count == 0)
                 {
-                    string subfolder = kvp.Key;
-                    long size = kvp.Value;
-
-                    // Remove start slash and initial path
-                    subfolder = subfolder.Replace(m_PathBox.Text, "");
-                    if (subfolder.StartsWith("\\"))
-                        subfolder = subfolder.Remove(0, 1);
-
-                    // Check whether the folder exists - we're not showing subfolders of subfolders (yet)
-                    bool matched = false;
-                    foreach (string sf in subfolders)
+                    m_StatusLabel.Text = "No subfolders were found.";
+                }
+                else
+                {
+                    List<string> subfolders = new List<string>();
+                    long totalSize = 0;
+                    foreach (KeyValuePair<string, long> kvp in m_DirectorySizes)
                     {
-                        Match m = Regex.Match(subfolder, sf);
-                        if (m.Success)
-                            matched = true;
+                        string subfolder = kvp.Key;
+                        long size = kvp.Value;
+
+                        // Remove start slash and initial path
+                        subfolder = subfolder.Replace(m_PathBox.Text, "");
+                        if (subfolder.StartsWith("\\"))
+                            subfolder = subfolder.Remove(0, 1);
+
+                        // Check whether the folder exists - we're not showing subfolders of subfolders (yet)
+                        bool matched = false;
+                        foreach (string sf in subfolders)
+                        {
+                            Match m = Regex.Match(subfolder, sf);
+                            if (m.Success)
+                                matched = true;
+                        }
+                        // Didn't exit add it
+                        if (!matched)
+                        {
+                            subfolders.Add(subfolder);
+                            AddToList(subfolder, kvp.Key, size);
+                            totalSize += size;
+                        }
                     }
-                    // Didn't exit add it
-                    if (!matched) {
-                        subfolders.Add(subfolder);
-                        AddToList(subfolder, size);
-                        totalSize += size;
+
+                    m_StatusLabel.Text = "Analysis complete. Processed a total of " + m_DirectorySizes.Count.ToString() + " directories ";
+                    String secs = String.Format("{0}.{1:##}", m_Stopwatch.Elapsed.Seconds, m_Stopwatch.Elapsed.Milliseconds);
+                    m_StatusLabel.Text += "in " + secs + " seconds.";
+
+                    // Set directory info
+                    string root = Directory.GetDirectoryRoot(m_PathBox.Text);
+                    m_PathLabel.Text = "Info for " + m_PathBox.Text;
+                    m_DriveInfoLabel.Text = "Info for " + root;
+                    m_SubfoldersCount.Text = String.Format("{0} ({1} shown)", m_DirectorySizes.Count, m_FileList.Items.Count);
+                    m_SizeCount.Text = FormatBytes(totalSize);
+                    // Check if the root matches to the drives in the system (meaning it's a valid drive)
+                    foreach (DriveInfo di in (from drive in DriveInfo.GetDrives() where drive.Name.Equals(root) select drive))
+                    {
+                        m_UsagePercent.Text = String.Format("{0:P} of used space", (float)totalSize / (di.TotalSize - di.AvailableFreeSpace),
+                            FormatBytes(di.TotalSize - di.AvailableFreeSpace), FormatBytes(di.AvailableFreeSpace), di.Name);
+                        m_DriveSize.Text = FormatBytes(di.TotalSize);
+                        m_AvailableSpace.Text = FormatBytes(di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)di.AvailableFreeSpace / di.TotalSize);
+                        m_UsedSpace.Text = FormatBytes(di.TotalSize - di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)(di.TotalSize - di.AvailableFreeSpace) / di.TotalSize);
                     }
+                    m_DirectorySizes.Clear();
+                    DrawPiechart();
                 }
-  
-                m_StatusLabel.Text = "Analysis complete. Processed a total of " + m_DirectorySizes.Count.ToString() + " directories ";
-                String secs = String.Format("{0}.{1:##}", m_Stopwatch.Elapsed.Seconds, m_Stopwatch.Elapsed.Milliseconds);
-                m_StatusLabel.Text += "in " + secs + " seconds.";
+                m_TipLabel.Visible = true;
                 m_AnalyzeButton.Text = "Start analysis";
-                // Set directory info
-                string root = Directory.GetDirectoryRoot(m_PathBox.Text);
-                m_PathLabel.Text = "Info for " + m_PathBox.Text;
-                m_DriveInfoLabel.Text = "Info for " + root;
-                m_SubfoldersCount.Text = String.Format("{0} ({1} shown)", m_DirectorySizes.Count, m_FileList.Items.Count);
-                m_SizeCount.Text = FormatBytes(totalSize);
-                // Check if the root matches to the drives in the system (meaning it's a valid drive)
-                foreach (DriveInfo di in (from drive in DriveInfo.GetDrives() where drive.Name.Equals(root) select drive))
-                {
-                    m_UsagePercent.Text = String.Format("{0:P} of used space", (float)totalSize / (di.TotalSize - di.AvailableFreeSpace),
-                        FormatBytes(di.TotalSize - di.AvailableFreeSpace), FormatBytes(di.AvailableFreeSpace), di.Name);
-                    m_DriveSize.Text = FormatBytes(di.TotalSize);
-                    m_AvailableSpace.Text = FormatBytes(di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)di.AvailableFreeSpace / di.TotalSize);
-                    m_UsedSpace.Text = FormatBytes(di.TotalSize - di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)(di.TotalSize - di.AvailableFreeSpace) / di.TotalSize);
-                }
-                m_DirectorySizes.Clear();
-                DrawPiechart();
             }
         }
 
-        private void AddToList(string name, long size)
+        private void AddParentDirectoryItem()
+        {
+            string path = m_PathBox.Text;
+            if (Directory.GetDirectoryRoot(path) != path)
+            {
+                ListViewItem lvi = new ListViewItem();
+                string parentPath = Directory.GetParent(path).FullName;
+                lvi.Text = "Parent directory";
+                lvi.Tag = parentPath;
+                lvi.ImageIndex = 1;
+                m_FileList.Items.Add(lvi);
+            }
+        }
+
+        private void AddToList(string name, string realPath, long size)
         {
             if (name == null)
                 return;
 
             ListViewItem newItem = new ListViewItem();
             newItem.Text = name;
+            newItem.Tag = realPath;
             newItem.SubItems.Add(FormatBytes(size));
             newItem.SubItems[1].Tag = size;
             newItem.ImageIndex = 0;
@@ -282,6 +314,8 @@ namespace Requiro
             // Calculate size
             foreach (ListViewItem lvi in m_FileList.Items)
             {
+                if (lvi.Text == "Parent directory")
+                    continue;
                 long size = (long)lvi.SubItems[1].Tag;
                 dirList.Add(lvi.Text, size);
                 totalSize += size;
@@ -327,6 +361,20 @@ namespace Requiro
                 y += boxSize;
                 count += 1;
             }
+        }
+
+        private void m_FileList_Click(object sender, EventArgs e)
+        {
+            if (m_FileList.SelectedItems.Count > 0)
+            {
+                m_PathBox.Text = m_FileList.SelectedItems[0].Tag.ToString();
+                StartSearch();
+            }
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel1.Text);
         }
     }
 }
