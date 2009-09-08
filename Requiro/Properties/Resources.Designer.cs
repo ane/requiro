@@ -59,5 +59,12 @@ namespace Requiro.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Icon Requiro {
+            get {
+                object obj = ResourceManager.GetObject("Requiro", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

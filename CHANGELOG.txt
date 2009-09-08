@@ -1,0 +1,30 @@
+CHANGELOG
+---------
+
+v0.1.3 build 248
+
+@ Fixed a bug with UnauthorizedAccessException (the program didn't check whether it had access or not)
+@ Corrected the analysing button text after a search got cancelled.
+@ Fixed the pie chart, a chart won't be drawn if the search is unsuccessful
++ The program has now an icon
++ Versioning changed to Major.Minor.Minor.Build
+- Bug with network locations still unfixed
+- Invalid path characters in files will cause problems
+
+v0.1.3 build 217
+
++ Added interactive directory navigation
++ Pie chart now has a legend
+
+v0.1.2 build 193
+
+@ Fixed a bug with an empty path
++ Added info for the current drive
+
+v0.1.1 build 160
+
++ Initial release
+
+v0.1.0 build 100
+
++ Pie chart working

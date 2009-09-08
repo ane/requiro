@@ -61,7 +61,6 @@
             this.m_PathLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.m_TipLabel = new System.Windows.Forms.Label();
             this.m_DirectoryBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_PieChart)).BeginInit();
             this.panel2.SuspendLayout();
@@ -115,7 +114,10 @@
             this.path,
             this.totalSize});
             this.m_FileList.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.m_FileList.FullRowSelect = true;
+            this.m_FileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.m_FileList.Location = new System.Drawing.Point(8, 71);
+            this.m_FileList.MultiSelect = false;
             this.m_FileList.Name = "m_FileList";
             this.m_FileList.Size = new System.Drawing.Size(391, 306);
             this.m_FileList.SmallImageList = this.m_imageList;
@@ -172,7 +174,7 @@
             // m_VersionLabel
             // 
             this.m_VersionLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_VersionLabel.Location = new System.Drawing.Point(533, 382);
+            this.m_VersionLabel.Location = new System.Drawing.Point(534, 382);
             this.m_VersionLabel.Name = "m_VersionLabel";
             this.m_VersionLabel.Size = new System.Drawing.Size(186, 13);
             this.m_VersionLabel.TabIndex = 10;
@@ -363,22 +365,11 @@
             this.label1.TabIndex = 16;
             this.label1.Text = "by Antoine Kalmbach";
             // 
-            // m_TipLabel
-            // 
-            this.m_TipLabel.AutoSize = true;
-            this.m_TipLabel.Location = new System.Drawing.Point(5, 382);
-            this.m_TipLabel.Name = "m_TipLabel";
-            this.m_TipLabel.Size = new System.Drawing.Size(170, 13);
-            this.m_TipLabel.TabIndex = 17;
-            this.m_TipLabel.Text = "Tip: Click a directory to analyse it.";
-            this.m_TipLabel.Visible = false;
-            // 
             // Mainform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(832, 417);
-            this.Controls.Add(this.m_TipLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.m_StatusLabel);
@@ -389,11 +380,12 @@
             this.Controls.Add(this.m_DirectoryBox);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Mainform";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Requiro v0.1";
+            this.Text = "Requiro";
             this.Load += new System.EventHandler(this.Mainform_Load);
             this.m_DirectoryBox.ResumeLayout(false);
             this.m_DirectoryBox.PerformLayout();
@@ -439,7 +431,6 @@
         private System.Windows.Forms.Label m_UsedSpace;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label m_DriveInfoLabel;
-        private System.Windows.Forms.Label m_TipLabel;
     }
 }
 
