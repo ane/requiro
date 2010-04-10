@@ -238,9 +238,12 @@ namespace Requiro
                         // - Skip hidden files
                         // - Skip directories that don't exist
                         // - Skip directories that we don't have access to
+                        // We do this by asking read permission for this directory. If it gets denied, then a
+                        // SecurityException is thrown and we skip this directory.
+                        FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read, currentDir);
                         try
                         {
-                            FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read, currentDir);
+                            perm.Demand();
                         }
                         catch (System.Security.SecurityException se)
                         {
@@ -258,6 +261,7 @@ namespace Requiro
                         {
                             length = m_DirectorySizes[currentDir];
                         }
+
                         else
                         {
                             length = GetDirectoryFileSize(currentDir);
@@ -513,7 +517,7 @@ namespace Requiro
             }
             catch (Exception ex)
             {
-                // Do nothing. If Windows Firewall blocks the start of the browser the process will not start and we ignore it.
+                // Do nothing. If a firewall blocks the start of the browser the process will not start and we ignore it.
             }
         }
 

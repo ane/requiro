@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Directories", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Directories", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mainform));
             this.m_DirectoryBox = new System.Windows.Forms.GroupBox();
             this.m_PathBox = new System.Windows.Forms.ComboBox();
@@ -83,7 +83,7 @@
             this.m_DirectoryBox.Controls.Add(this.m_BrowseButton);
             this.m_DirectoryBox.Location = new System.Drawing.Point(8, 12);
             this.m_DirectoryBox.Name = "m_DirectoryBox";
-            this.m_DirectoryBox.Size = new System.Drawing.Size(1127, 53);
+            this.m_DirectoryBox.Size = new System.Drawing.Size(1054, 53);
             this.m_DirectoryBox.TabIndex = 0;
             this.m_DirectoryBox.TabStop = false;
             this.m_DirectoryBox.Text = "Full path to target directory";
@@ -97,14 +97,14 @@
             this.m_PathBox.FormattingEnabled = true;
             this.m_PathBox.Location = new System.Drawing.Point(6, 20);
             this.m_PathBox.Name = "m_PathBox";
-            this.m_PathBox.Size = new System.Drawing.Size(942, 21);
+            this.m_PathBox.Size = new System.Drawing.Size(869, 21);
             this.m_PathBox.TabIndex = 3;
             // 
             // m_AnalyzeButton
             // 
             this.m_AnalyzeButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_AnalyzeButton.Location = new System.Drawing.Point(992, 18);
+            this.m_AnalyzeButton.Location = new System.Drawing.Point(919, 18);
             this.m_AnalyzeButton.Name = "m_AnalyzeButton";
             this.m_AnalyzeButton.Size = new System.Drawing.Size(129, 23);
             this.m_AnalyzeButton.TabIndex = 2;
@@ -116,7 +116,7 @@
             // 
             this.m_BrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_BrowseButton.Location = new System.Drawing.Point(954, 18);
+            this.m_BrowseButton.Location = new System.Drawing.Point(881, 18);
             this.m_BrowseButton.Name = "m_BrowseButton";
             this.m_BrowseButton.Size = new System.Drawing.Size(33, 23);
             this.m_BrowseButton.TabIndex = 1;
@@ -134,16 +134,16 @@
             this.totalSize});
             this.m_FileList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.m_FileList.FullRowSelect = true;
-            listViewGroup1.Header = "Directories";
-            listViewGroup1.Name = "Directories";
-            listViewGroup2.Header = "Files";
-            listViewGroup2.Name = "Files";
+            listViewGroup3.Header = "Directories";
+            listViewGroup3.Name = "Directories";
+            listViewGroup4.Header = "Files";
+            listViewGroup4.Name = "Files";
             this.m_FileList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
+            listViewGroup3,
+            listViewGroup4});
             this.m_FileList.Location = new System.Drawing.Point(8, 85);
             this.m_FileList.Name = "m_FileList";
-            this.m_FileList.Size = new System.Drawing.Size(555, 335);
+            this.m_FileList.Size = new System.Drawing.Size(552, 374);
             this.m_FileList.SmallImageList = this.m_imageList;
             this.m_FileList.TabIndex = 6;
             this.m_FileList.UseCompatibleStateImageBehavior = false;
@@ -200,7 +200,7 @@
             // 
             this.m_VersionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.m_VersionLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_VersionLabel.Location = new System.Drawing.Point(846, 425);
+            this.m_VersionLabel.Location = new System.Drawing.Point(773, 464);
             this.m_VersionLabel.Name = "m_VersionLabel";
             this.m_VersionLabel.Size = new System.Drawing.Size(186, 13);
             this.m_VersionLabel.TabIndex = 10;
@@ -214,7 +214,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.m_PieChart.Location = new System.Drawing.Point(7, 13);
             this.m_PieChart.Name = "m_PieChart";
-            this.m_PieChart.Size = new System.Drawing.Size(553, 240);
+            this.m_PieChart.Size = new System.Drawing.Size(483, 279);
             this.m_PieChart.TabIndex = 11;
             this.m_PieChart.TabStop = false;
             this.m_PieChart.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.m_PieChart_LoadCompleted);
@@ -231,7 +231,7 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(933, 438);
+            this.linkLabel1.Location = new System.Drawing.Point(860, 477);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(202, 13);
             this.linkLabel1.TabIndex = 12;
@@ -249,7 +249,7 @@
             // 
             this.m_StatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.m_StatusLabel.AutoSize = true;
-            this.m_StatusLabel.Location = new System.Drawing.Point(5, 432);
+            this.m_StatusLabel.Location = new System.Drawing.Point(5, 471);
             this.m_StatusLabel.Name = "m_StatusLabel";
             this.m_StatusLabel.Size = new System.Drawing.Size(107, 13);
             this.m_StatusLabel.TabIndex = 14;
@@ -274,14 +274,14 @@
             this.panel2.Controls.Add(this.m_SubfoldersCount);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.m_PathLabel);
-            this.panel2.Location = new System.Drawing.Point(576, 350);
+            this.panel2.Location = new System.Drawing.Point(566, 389);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(559, 70);
+            this.panel2.Size = new System.Drawing.Size(496, 70);
             this.panel2.TabIndex = 9;
             // 
             // m_DriveSize
             // 
-            this.m_DriveSize.Location = new System.Drawing.Point(459, 22);
+            this.m_DriveSize.Location = new System.Drawing.Point(422, 22);
             this.m_DriveSize.Name = "m_DriveSize";
             this.m_DriveSize.Size = new System.Drawing.Size(67, 13);
             this.m_DriveSize.TabIndex = 13;
@@ -290,7 +290,7 @@
             // 
             // m_AvailableSpace
             // 
-            this.m_AvailableSpace.Location = new System.Drawing.Point(408, 35);
+            this.m_AvailableSpace.Location = new System.Drawing.Point(371, 35);
             this.m_AvailableSpace.Name = "m_AvailableSpace";
             this.m_AvailableSpace.Size = new System.Drawing.Size(118, 13);
             this.m_AvailableSpace.TabIndex = 12;
@@ -300,7 +300,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(356, 48);
+            this.label8.Location = new System.Drawing.Point(319, 48);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(66, 13);
             this.label8.TabIndex = 11;
@@ -309,7 +309,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(356, 22);
+            this.label7.Location = new System.Drawing.Point(319, 22);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(57, 13);
             this.label7.TabIndex = 10;
@@ -317,7 +317,7 @@
             // 
             // m_UsedSpace
             // 
-            this.m_UsedSpace.Location = new System.Drawing.Point(420, 48);
+            this.m_UsedSpace.Location = new System.Drawing.Point(383, 48);
             this.m_UsedSpace.Name = "m_UsedSpace";
             this.m_UsedSpace.Size = new System.Drawing.Size(106, 13);
             this.m_UsedSpace.TabIndex = 9;
@@ -327,7 +327,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(356, 35);
+            this.label2.Location = new System.Drawing.Point(319, 35);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 13);
             this.label2.TabIndex = 8;
@@ -337,7 +337,7 @@
             // 
             this.m_DriveInfoLabel.AutoSize = true;
             this.m_DriveInfoLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_DriveInfoLabel.Location = new System.Drawing.Point(356, 9);
+            this.m_DriveInfoLabel.Location = new System.Drawing.Point(319, 9);
             this.m_DriveInfoLabel.Name = "m_DriveInfoLabel";
             this.m_DriveInfoLabel.Size = new System.Drawing.Size(170, 13);
             this.m_DriveInfoLabel.TabIndex = 7;
@@ -385,9 +385,9 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.m_PieChart);
-            this.groupBox1.Location = new System.Drawing.Point(569, 85);
+            this.groupBox1.Location = new System.Drawing.Point(566, 85);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(566, 259);
+            this.groupBox1.Size = new System.Drawing.Size(496, 298);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             // 
@@ -395,7 +395,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1028, 425);
+            this.label1.Location = new System.Drawing.Point(955, 464);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 13);
             this.label1.TabIndex = 16;
@@ -416,7 +416,7 @@
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(566, 68);
+            this.label9.Location = new System.Drawing.Point(563, 68);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(64, 14);
             this.label9.TabIndex = 21;
@@ -434,7 +434,7 @@
             this.m_RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.m_RefreshButton.ImageIndex = 0;
             this.m_RefreshButton.ImageList = this.m_toolBarImages;
-            this.m_RefreshButton.Location = new System.Drawing.Point(473, 426);
+            this.m_RefreshButton.Location = new System.Drawing.Point(470, 465);
             this.m_RefreshButton.Name = "m_RefreshButton";
             this.m_RefreshButton.Size = new System.Drawing.Size(90, 25);
             this.m_RefreshButton.TabIndex = 22;
@@ -449,7 +449,7 @@
             this.m_DeleteSelectedItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.m_DeleteSelectedItemButton.ImageIndex = 1;
             this.m_DeleteSelectedItemButton.ImageList = this.m_toolBarImages;
-            this.m_DeleteSelectedItemButton.Location = new System.Drawing.Point(389, 426);
+            this.m_DeleteSelectedItemButton.Location = new System.Drawing.Point(389, 465);
             this.m_DeleteSelectedItemButton.Name = "m_DeleteSelectedItemButton";
             this.m_DeleteSelectedItemButton.Size = new System.Drawing.Size(75, 25);
             this.m_DeleteSelectedItemButton.TabIndex = 23;
@@ -464,7 +464,7 @@
             this.AcceptButton = this.m_AnalyzeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1144, 460);
+            this.ClientSize = new System.Drawing.Size(1071, 499);
             this.Controls.Add(this.m_DeleteSelectedItemButton);
             this.Controls.Add(this.m_RefreshButton);
             this.Controls.Add(this.label9);
