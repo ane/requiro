@@ -33,7 +33,6 @@
             this.m_DirectoryBox = new System.Windows.Forms.GroupBox();
             this.m_AnalyzeButton = new System.Windows.Forms.Button();
             this.m_BrowseButton = new System.Windows.Forms.Button();
-            this.m_PathBox = new System.Windows.Forms.TextBox();
             this.m_FileList = new System.Windows.Forms.ListView();
             this.path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.totalSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -61,6 +60,11 @@
             this.m_PathLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.m_RefreshCurrentDirButton = new System.Windows.Forms.Button();
+            this.m_DeleteSelectedDirectoryButton = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.m_PathBox = new System.Windows.Forms.ComboBox();
             this.m_DirectoryBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_PieChart)).BeginInit();
             this.panel2.SuspendLayout();
@@ -69,19 +73,23 @@
             // 
             // m_DirectoryBox
             // 
+            this.m_DirectoryBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_DirectoryBox.Controls.Add(this.m_PathBox);
             this.m_DirectoryBox.Controls.Add(this.m_AnalyzeButton);
             this.m_DirectoryBox.Controls.Add(this.m_BrowseButton);
-            this.m_DirectoryBox.Controls.Add(this.m_PathBox);
             this.m_DirectoryBox.Location = new System.Drawing.Point(8, 12);
             this.m_DirectoryBox.Name = "m_DirectoryBox";
-            this.m_DirectoryBox.Size = new System.Drawing.Size(815, 53);
+            this.m_DirectoryBox.Size = new System.Drawing.Size(1127, 53);
             this.m_DirectoryBox.TabIndex = 0;
             this.m_DirectoryBox.TabStop = false;
             this.m_DirectoryBox.Text = "Full path to target directory";
             // 
             // m_AnalyzeButton
             // 
-            this.m_AnalyzeButton.Location = new System.Drawing.Point(680, 18);
+            this.m_AnalyzeButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_AnalyzeButton.Location = new System.Drawing.Point(992, 18);
             this.m_AnalyzeButton.Name = "m_AnalyzeButton";
             this.m_AnalyzeButton.Size = new System.Drawing.Size(129, 23);
             this.m_AnalyzeButton.TabIndex = 2;
@@ -91,24 +99,20 @@
             // 
             // m_BrowseButton
             // 
-            this.m_BrowseButton.Location = new System.Drawing.Point(642, 18);
+            this.m_BrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_BrowseButton.Location = new System.Drawing.Point(954, 18);
             this.m_BrowseButton.Name = "m_BrowseButton";
-            this.m_BrowseButton.Size = new System.Drawing.Size(32, 23);
+            this.m_BrowseButton.Size = new System.Drawing.Size(33, 23);
             this.m_BrowseButton.TabIndex = 1;
             this.m_BrowseButton.Text = "...";
             this.m_BrowseButton.UseVisualStyleBackColor = true;
             this.m_BrowseButton.Click += new System.EventHandler(this.m_BrowseButton_Click);
             // 
-            // m_PathBox
-            // 
-            this.m_PathBox.Location = new System.Drawing.Point(6, 20);
-            this.m_PathBox.Name = "m_PathBox";
-            this.m_PathBox.Size = new System.Drawing.Size(630, 21);
-            this.m_PathBox.TabIndex = 0;
-            // 
             // m_FileList
             // 
-            this.m_FileList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.m_FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.m_FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.path,
@@ -116,10 +120,10 @@
             this.m_FileList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.m_FileList.FullRowSelect = true;
             this.m_FileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.m_FileList.Location = new System.Drawing.Point(8, 71);
+            this.m_FileList.Location = new System.Drawing.Point(8, 90);
             this.m_FileList.MultiSelect = false;
             this.m_FileList.Name = "m_FileList";
-            this.m_FileList.Size = new System.Drawing.Size(391, 306);
+            this.m_FileList.Size = new System.Drawing.Size(653, 330);
             this.m_FileList.SmallImageList = this.m_imageList;
             this.m_FileList.TabIndex = 6;
             this.m_FileList.UseCompatibleStateImageBehavior = false;
@@ -129,7 +133,7 @@
             // path
             // 
             this.path.Text = "Subfolder";
-            this.path.Width = 250;
+            this.path.Width = 450;
             // 
             // totalSize
             // 
@@ -173,8 +177,9 @@
             // 
             // m_VersionLabel
             // 
+            this.m_VersionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.m_VersionLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_VersionLabel.Location = new System.Drawing.Point(534, 382);
+            this.m_VersionLabel.Location = new System.Drawing.Point(846, 425);
             this.m_VersionLabel.Name = "m_VersionLabel";
             this.m_VersionLabel.Size = new System.Drawing.Size(186, 13);
             this.m_VersionLabel.TabIndex = 10;
@@ -183,11 +188,16 @@
             // 
             // m_PieChart
             // 
+            this.m_PieChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.m_PieChart.Location = new System.Drawing.Point(7, 13);
             this.m_PieChart.Name = "m_PieChart";
-            this.m_PieChart.Size = new System.Drawing.Size(405, 211);
+            this.m_PieChart.Size = new System.Drawing.Size(455, 240);
             this.m_PieChart.TabIndex = 11;
             this.m_PieChart.TabStop = false;
+            this.m_PieChart.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.m_PieChart_LoadCompleted);
+            this.m_PieChart.SizeChanged += new System.EventHandler(this.m_PieChart_SizeChanged);
             this.m_PieChart.Paint += new System.Windows.Forms.PaintEventHandler(this.m_PieChart_Paint);
             // 
             // bgWorker
@@ -198,8 +208,9 @@
             // 
             // linkLabel1
             // 
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(621, 395);
+            this.linkLabel1.Location = new System.Drawing.Point(933, 438);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(202, 13);
             this.linkLabel1.TabIndex = 12;
@@ -215,8 +226,9 @@
             // 
             // m_StatusLabel
             // 
+            this.m_StatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.m_StatusLabel.AutoSize = true;
-            this.m_StatusLabel.Location = new System.Drawing.Point(5, 395);
+            this.m_StatusLabel.Location = new System.Drawing.Point(5, 433);
             this.m_StatusLabel.Name = "m_StatusLabel";
             this.m_StatusLabel.Size = new System.Drawing.Size(107, 13);
             this.m_StatusLabel.TabIndex = 14;
@@ -224,6 +236,7 @@
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.SystemColors.ControlLight;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.m_DriveSize);
@@ -240,9 +253,9 @@
             this.panel2.Controls.Add(this.m_SubfoldersCount);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.m_PathLabel);
-            this.panel2.Location = new System.Drawing.Point(405, 307);
+            this.panel2.Location = new System.Drawing.Point(667, 350);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(418, 70);
+            this.panel2.Size = new System.Drawing.Size(468, 70);
             this.panel2.TabIndex = 9;
             // 
             // m_DriveSize
@@ -305,9 +318,9 @@
             this.m_DriveInfoLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_DriveInfoLabel.Location = new System.Drawing.Point(230, 9);
             this.m_DriveInfoLabel.Name = "m_DriveInfoLabel";
-            this.m_DriveInfoLabel.Size = new System.Drawing.Size(119, 13);
+            this.m_DriveInfoLabel.Size = new System.Drawing.Size(170, 13);
             this.m_DriveInfoLabel.TabIndex = 7;
-            this.m_DriveInfoLabel.Text = "Info for: <no drive>";
+            this.m_DriveInfoLabel.Text = "Info for: <no drive selected>";
             // 
             // m_UsagePercent
             // 
@@ -342,34 +355,94 @@
             this.m_PathLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_PathLabel.Location = new System.Drawing.Point(3, 9);
             this.m_PathLabel.Name = "m_PathLabel";
-            this.m_PathLabel.Size = new System.Drawing.Size(142, 13);
+            this.m_PathLabel.Size = new System.Drawing.Size(193, 13);
             this.m_PathLabel.TabIndex = 0;
-            this.m_PathLabel.Text = "Info for: <no directory>";
+            this.m_PathLabel.Text = "Info for: <no directory selected>";
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.m_PieChart);
-            this.groupBox1.Location = new System.Drawing.Point(405, 71);
+            this.groupBox1.Location = new System.Drawing.Point(667, 85);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(418, 230);
+            this.groupBox1.Size = new System.Drawing.Size(468, 259);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Disk usage chart";
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(716, 382);
+            this.label1.Location = new System.Drawing.Point(1028, 425);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 13);
             this.label1.TabIndex = 16;
             this.label1.Text = "by Antoine Kalmbach";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(5, 72);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(93, 14);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "Search results";
+            // 
+            // m_RefreshCurrentDirButton
+            // 
+            this.m_RefreshCurrentDirButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_RefreshCurrentDirButton.Location = new System.Drawing.Point(504, 426);
+            this.m_RefreshCurrentDirButton.Name = "m_RefreshCurrentDirButton";
+            this.m_RefreshCurrentDirButton.Size = new System.Drawing.Size(75, 27);
+            this.m_RefreshCurrentDirButton.TabIndex = 19;
+            this.m_RefreshCurrentDirButton.Text = "Refresh";
+            this.m_RefreshCurrentDirButton.UseVisualStyleBackColor = true;
+            // 
+            // m_DeleteSelectedDirectoryButton
+            // 
+            this.m_DeleteSelectedDirectoryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_DeleteSelectedDirectoryButton.Location = new System.Drawing.Point(586, 426);
+            this.m_DeleteSelectedDirectoryButton.Name = "m_DeleteSelectedDirectoryButton";
+            this.m_DeleteSelectedDirectoryButton.Size = new System.Drawing.Size(75, 27);
+            this.m_DeleteSelectedDirectoryButton.TabIndex = 20;
+            this.m_DeleteSelectedDirectoryButton.Text = "Delete";
+            this.m_DeleteSelectedDirectoryButton.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(664, 72);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(64, 14);
+            this.label9.TabIndex = 21;
+            this.label9.Text = "Statistics";
+            // 
+            // m_PathBox
+            // 
+            this.m_PathBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_PathBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.m_PathBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
+            this.m_PathBox.FormattingEnabled = true;
+            this.m_PathBox.Location = new System.Drawing.Point(6, 20);
+            this.m_PathBox.Name = "m_PathBox";
+            this.m_PathBox.Size = new System.Drawing.Size(942, 21);
+            this.m_PathBox.TabIndex = 3;
+            // 
             // Mainform
             // 
+            this.AcceptButton = this.m_AnalyzeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(832, 417);
+            this.ClientSize = new System.Drawing.Size(1144, 460);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.m_DeleteSelectedDirectoryButton);
+            this.Controls.Add(this.m_RefreshCurrentDirButton);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.m_StatusLabel);
@@ -379,7 +452,6 @@
             this.Controls.Add(this.m_FileList);
             this.Controls.Add(this.m_DirectoryBox);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Mainform";
@@ -388,7 +460,6 @@
             this.Text = "Requiro";
             this.Load += new System.EventHandler(this.Mainform_Load);
             this.m_DirectoryBox.ResumeLayout(false);
-            this.m_DirectoryBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_PieChart)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -402,7 +473,6 @@
 
         private System.Windows.Forms.GroupBox m_DirectoryBox;
         private System.Windows.Forms.Button m_BrowseButton;
-        private System.Windows.Forms.TextBox m_PathBox;
         private System.Windows.Forms.Button m_AnalyzeButton;
         private System.Windows.Forms.ListView m_FileList;
         private System.Windows.Forms.ColumnHeader path;
@@ -431,6 +501,11 @@
         private System.Windows.Forms.Label m_UsedSpace;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label m_DriveInfoLabel;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button m_RefreshCurrentDirButton;
+        private System.Windows.Forms.Button m_DeleteSelectedDirectoryButton;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox m_PathBox;
     }
 }
 

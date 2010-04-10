@@ -19,10 +19,17 @@ namespace Requiro
     public partial class Mainform : Form
     {
         private Dictionary<string, long> m_DirectorySizes = new Dictionary<string,long>();
+        private DirectoryCache m_DirectoryCache = new DirectoryCache();
         private Stopwatch m_Stopwatch = new Stopwatch();
         private Color[] m_Colors = new Color[64];
         private Version m_Version;
+        private int m_MaxDirs = 0;
+        private Dictionary<string, long> m_PieDirList = new Dictionary<string, long>();
         bool m_SearchSuccesful = false;
+        private long m_TotalPieSize = 0;
+
+        const string m_strStartAnalysis = "Start analysis";
+        const string m_strStopAnalysis = "Stop analysis";
 
         public Mainform()
         {
@@ -50,42 +57,112 @@ namespace Requiro
 
         private void StartSearch()
         {
+            ToolTip tip = new ToolTip();
+
+            tip.IsBalloon = true;
+            tip.InitialDelay = 5000;
+            tip.ToolTipIcon = ToolTipIcon.Error;
+            tip.UseFading = true;
+            tip.ToolTipTitle = "Error";
+
             if (!Directory.Exists(m_PathBox.Text))
-                return;
-            if (m_AnalyzeButton.Text == "Stop" && bgWorker.IsBusy)
             {
-                m_SearchSuccesful = false;
-                bgWorker.CancelAsync();
+                tip.Show("Invalid path. Please select a valid physical drive or network path.", m_PathBox, new Point(200, -65));
+                return;
+            }
+            if (m_AnalyzeButton.Text == m_strStopAnalysis)
+            {
+                StopSearch();
                 return;
             }
 
-            m_DirectorySizes.Clear();
-            m_FileList.Items.Clear();
+            if (m_DirectoryCache.HasPath(m_PathBox.Text))
+            {
+                m_Stopwatch.Reset();
+                m_Stopwatch.Start();
+                BuildListFromCache();
+                return;
+            }
 
+            m_FileList.Items.Clear();
+            //m_DirectorySizes.Clear();
             m_StatusLabel.Text = "Starting analysis...";
-            m_AnalyzeButton.Text = "Stopping...";
+            m_AnalyzeButton.Text = m_strStopAnalysis;
             bgWorker.RunWorkerAsync(m_PathBox.Text);
             m_Stopwatch.Reset();
             m_Stopwatch.Start();
-            m_StatusLabel.Text = "Analysing " + m_PathBox.Text + " ... ";
+            m_StatusLabel.Text = "Analyzing " + m_PathBox.Text + " ... ";
+        }
+
+        private void StopSearch()
+        {
+            if (bgWorker.IsBusy)
+                bgWorker.CancelAsync();
+            m_StatusLabel.Text = "Analysis cancelled.";
+            m_AnalyzeButton.Text = m_strStartAnalysis;
+            m_SearchSuccesful = false;
         }
 
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bg = sender as BackgroundWorker;
             
-
             string path = (string) e.Argument;
+
             try
             {
                 this.ProcessDirectory(path, bg, e);
             }
-        
+
             catch (Exception ex)
             {
+                // Cancel the current search
+                StopSearch();
                 ExceptionForm exfm = new ExceptionForm(ex, m_Version);
                 exfm.ShowDialog(this);
             }
+        }
+
+        private void BuildListFromCache()
+        {
+            Dictionary<string, long> files = m_DirectoryCache.GetPathFiles(m_PathBox.Text);
+            m_Stopwatch.Stop();
+            
+            m_FileList.Items.Clear();
+            AddParentDirectoryItem();
+            long totalSize = 0;
+            foreach (KeyValuePair<string, long> kvp in files)
+            {
+                string path = kvp.Key;
+                long size = kvp.Value;
+                path = path.Replace(m_PathBox.Text, "");
+                if (path.StartsWith("\\"))
+                    path = path.Remove(0, 1);
+                AddToList(path, kvp.Key, size);
+                totalSize += size;
+            }
+
+            AddCurrentDirectoryFiles(m_PathBox.Text);
+            BuildDirectoryData();
+            BuildTextStatistics(totalSize);
+            m_PieChart.Refresh();
+            UpdateWithStopwatch(true);
+        }
+
+        private void AddFilesToCache()
+        {
+            Dictionary<string, long> files = new Dictionary<string, long>();
+
+            foreach (ListViewItem lvi in m_FileList.Items)
+            {
+                if (!Directory.Exists(lvi.Tag.ToString()))
+                    continue;
+                if (lvi.Text == "Parent directory")
+                    continue;
+                files.Add(lvi.Tag.ToString(), Convert.ToInt64(lvi.SubItems[1].Tag.ToString()));
+            }
+            if (files.Count > 0)
+                m_DirectoryCache.AddPathFiles(m_PathBox.Text, files);
         }
 
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -94,17 +171,18 @@ namespace Requiro
             {
                 m_Stopwatch.Stop();
                 m_SearchSuccesful = false;
-                if (e.Cancelled)
-                {
-                    m_StatusLabel.Text = "Analysis cancelled before it could finish.";
-                    m_AnalyzeButton.Text = "Start analysis";
-                }
-                else
+                if (!e.Cancelled)
                 {
                     AddParentDirectoryItem();
                     if (m_DirectorySizes.Count == 0)
                     {
-                        m_StatusLabel.Text = "No subfolders were found.";
+                        long size = AddCurrentDirectoryFiles(m_PathBox.Text);
+                        //AddFilesToCache();
+                        UpdateWithStopwatch(false);
+                        BuildTextStatistics(size);
+                        BuildDirectoryData();
+                        m_PieChart.Refresh();
+                        MessageBox.Show("Pluts");
                     }
                     else
                     {
@@ -120,15 +198,16 @@ namespace Requiro
                             if (subfolder.StartsWith("\\"))
                                 subfolder = subfolder.Remove(0, 1);
 
-                            // Check whether the folder exists - we're not showing subfolders of subfolders (yet)
+                            // Check if it's a direct subfolder
                             bool matched = false;
                             foreach (string sf in subfolders)
-                            {
-                                Match m = Regex.Match(subfolder, sf);
+                            {                              
+                                Match m = Regex.Match(subfolder, Regex.Escape(sf));
+                                //Match m = Regex.Match(subfolder, sf);
                                 if (m.Success)
                                     matched = true;
                             }
-                            // Didn't exit add it
+                            // Not a subfolder's subfolder, so we can add it to the list of current directories
                             if (!matched)
                             {
                                 subfolders.Add(subfolder);
@@ -137,38 +216,188 @@ namespace Requiro
                             }
                         }
 
-                        m_StatusLabel.Text = "Analysis complete. Processed a total of " + m_DirectorySizes.Count.ToString() + " directories ";
-                        String secs = String.Format("{0}.{1:##}", m_Stopwatch.Elapsed.Seconds, m_Stopwatch.Elapsed.Milliseconds);
-                        m_StatusLabel.Text += "in " + secs + " seconds.";
+                        totalSize += AddCurrentDirectoryFiles(m_PathBox.Text);
+                        UpdateWithStopwatch(false);
 
-                        // Set directory info
-                        string root = Directory.GetDirectoryRoot(m_PathBox.Text);
-                        m_PathLabel.Text = "Info for " + m_PathBox.Text;
-                        m_DriveInfoLabel.Text = "Info for " + root;
-                        m_SubfoldersCount.Text = String.Format("{0} ({1} shown)", m_DirectorySizes.Count, m_FileList.Items.Count);
-                        m_SizeCount.Text = FormatBytes(totalSize);
-                        // Check if the root matches to the drives in the system (meaning it's a valid drive)
-                        foreach (DriveInfo di in (from drive in DriveInfo.GetDrives() where drive.Name.Equals(root) select drive))
-                        {
-                            m_UsagePercent.Text = String.Format("{0:P} of used space", (float)totalSize / (di.TotalSize - di.AvailableFreeSpace),
-                                FormatBytes(di.TotalSize - di.AvailableFreeSpace), FormatBytes(di.AvailableFreeSpace), di.Name);
-                            m_DriveSize.Text = FormatBytes(di.TotalSize);
-                            m_AvailableSpace.Text = FormatBytes(di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)di.AvailableFreeSpace / di.TotalSize);
-                            m_UsedSpace.Text = FormatBytes(di.TotalSize - di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)(di.TotalSize - di.AvailableFreeSpace) / di.TotalSize);
-                        }
+                        BuildTextStatistics(totalSize);
                         m_SearchSuccesful = true;
                         m_DirectorySizes.Clear();
-                        DrawPiechart();
+                        m_MaxDirs = (int)(((m_PieChart.Size.Height - 10)) / 10);
+                        BuildDirectoryData();
+                        AddFilesToCache();
+                        m_PieChart.Refresh();
                     }
-                    m_AnalyzeButton.Text = "Start analysis";
+                    m_AnalyzeButton.Text = m_strStartAnalysis;
                 }
             }
 
             catch (Exception ex)
             {
+                StopSearch();
+                ExceptionForm exfm = new ExceptionForm(ex, m_Version);
+                exfm.ShowDialog(this);   
+            }
+        }
+
+        private void UpdateWithStopwatch(bool cached)
+        {
+            string count, cacheAppend = "";
+            if (cached)
+            {
+                count = m_FileList.Items.Count.ToString();
+                cacheAppend = " (Cached)";
+            }
+            else
+            {
+                count = m_DirectorySizes.Count.ToString();
+            }
+            m_StatusLabel.Text = "Analysis complete. Processed a total of " + count + " directories ";
+            String secs = String.Format("{0}.{1:##}", m_Stopwatch.Elapsed.Seconds, m_Stopwatch.Elapsed.Milliseconds);
+            m_StatusLabel.Text += "in " + secs + " seconds.";
+            m_StatusLabel.Text += cacheAppend;
+        }
+
+        private void BuildTextStatistics(long size)
+        {
+            // Set directory info
+            string root = Directory.GetDirectoryRoot(m_PathBox.Text);
+            m_PathLabel.Text = "Info for " + m_PathBox.Text;
+            m_DriveInfoLabel.Text = "Info for " + root;
+            m_SubfoldersCount.Text = String.Format("{0} ({1} shown)", m_DirectorySizes.Count, m_FileList.Items.Count);
+            m_SizeCount.Text = FormatBytes(size);
+            // Check if the root matches to the drives in the system (meaning it's a valid drive)
+            foreach (DriveInfo di in (from drive in DriveInfo.GetDrives() where drive.Name.Equals(root) select drive))
+            {
+                m_UsagePercent.Text = String.Format("{0:P} of used space", (float)size / (di.TotalSize - di.AvailableFreeSpace),
+                    FormatBytes(di.TotalSize - di.AvailableFreeSpace), FormatBytes(di.AvailableFreeSpace), di.Name);
+                m_DriveSize.Text = FormatBytes(di.TotalSize);
+                m_AvailableSpace.Text = FormatBytes(di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)di.AvailableFreeSpace / di.TotalSize);
+                m_UsedSpace.Text = FormatBytes(di.TotalSize - di.AvailableFreeSpace) + String.Format(" ({0:##%})", (float)(di.TotalSize - di.AvailableFreeSpace) / di.TotalSize);
+            }
+        }
+
+        private void ProcessDirectory(string path, BackgroundWorker worker, DoWorkEventArgs e)
+        {
+            if (!System.IO.Directory.Exists(path))
+                throw new System.IO.DirectoryNotFoundException("Invalid path");
+
+            // Check if we can access the path
+            try
+            {
+                FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read, path);
+            }
+            catch (System.Security.SecurityException)
+            {
+                worker.CancelAsync();
+            }
+
+            try
+            {
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    string[] entries = Directory.GetDirectories(path);
+                    foreach (string currentDir in entries)
+                    {
+                        // Check for errors
+                        // - Skip hidden files
+                        // - Skip directories that don't exist
+                        // - Skip directories that we don't have access to
+                        try
+                        {
+                            FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read, currentDir);
+                        }
+                        catch (System.Security.SecurityException se)
+                        {
+                            continue;
+                        }
+
+                        if ((File.GetAttributes(currentDir) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                            continue;
+                        if (!Directory.Exists(currentDir))
+                            continue;
+
+                        long length = 0;
+
+                        if (m_DirectorySizes.ContainsKey(currentDir))
+                        {
+                            length = m_DirectorySizes[currentDir];
+                        }
+                        else
+                        {
+                            length = GetDirectoryFileSize(currentDir);
+                            m_DirectorySizes.Add(currentDir, length);
+                        }
+
+                        DirectoryInfo parent = new DirectoryInfo(currentDir).Parent;
+
+                        // Since we have to take the size of sub-folders into account the algorithm
+                        // must iterate backwards towards the parent directories and add the size of the current
+                        // directory to it.
+                        while (parent != null && !this.bgWorker.CancellationPending)
+                        {
+                            if (m_DirectorySizes.ContainsKey(parent.FullName))
+                            {
+                                m_DirectorySizes[parent.FullName] += length;
+                                parent = parent.Parent;
+                            }
+                            else
+                                break;
+                        }
+
+                        ProcessDirectory(currentDir, worker, e);
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                StopSearch();
                 ExceptionForm exfm = new ExceptionForm(ex, m_Version);
                 exfm.ShowDialog(this);
             }
+        }
+
+
+        private long AddCurrentDirectoryFiles(string path)
+        {
+            System.IO.DirectoryInfo di = new DirectoryInfo(path);
+            long size = 0;
+            foreach (System.IO.FileInfo file in di.GetFiles())
+            {
+                string key = file.Extension;
+
+                switch (key.ToUpperInvariant())
+                {
+                    case ".EXE":
+                    case ".LNK":
+                        key = System.IO.Path.GetFileNameWithoutExtension(file.FullName);
+                        break;
+                }
+
+                if (!this.m_imageList.Images.Keys.Contains(key))
+                {
+                    this.m_imageList.Images.Add(key, System.Drawing.Icon.ExtractAssociatedIcon(file.FullName));
+                }
+
+                int index = this.m_imageList.Images.Keys.IndexOf(key);
+                long fileSize = file.Length;
+                ListViewItem item = new ListViewItem();
+
+                item.Text = file.Name;
+    
+                item.ImageIndex = index;
+                item.SubItems.Add(FormatBytes(fileSize));
+                item.SubItems[1].Tag = fileSize;
+                size += fileSize;
+                item.Tag = file.FullName;
+
+                this.m_FileList.Items.Add(item);
+            }
+            return size;
         }
 
         private void AddParentDirectoryItem()
@@ -188,8 +417,10 @@ namespace Requiro
         private void AddToList(string name, string realPath, long size)
         {
             if (name == null)
+            {
+                MessageBox.Show("APUA");
                 return;
-
+            }
             ListViewItem newItem = new ListViewItem();
             newItem.Text = name;
             newItem.Tag = realPath;
@@ -201,7 +432,7 @@ namespace Requiro
             m_FileList.Items.Add(newItem);
         }
 
-        private long GetDirectorySize(string path)
+        private long GetDirectoryFileSize(string path)
         {
             DirectoryInfo di = new DirectoryInfo(path);
             long size = 0;
@@ -226,89 +457,6 @@ namespace Requiro
           return "0 B";
         }
 
-        private void ProcessDirectory(string path, BackgroundWorker worker, DoWorkEventArgs e)
-        {
-            if (!System.IO.Directory.Exists(path))
-                throw new System.IO.DirectoryNotFoundException("Invalid path");
-
-            // Check if we can access the path
-            try {
-                FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read, path);
-            }
-            catch (System.Security.SecurityException) {
-                worker.CancelAsync();
-            }
-
-            try
-            {
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                }
-                else
-                {
-                    string[] entries = Directory.GetDirectories(path);
-                    foreach (string currentDir in entries)
-                    {
-                        // Check for errors
-                        // - Skip hidden files
-                        // - Skip directories that don't exist
-                        // - Skip directories that we don't have access to
-                        try {
-                            FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read, currentDir);
-                        }
-                        catch (System.Security.SecurityException se) {
-                            continue;
-                        }
-
-                        if ((File.GetAttributes(currentDir) & FileAttributes.Hidden) == FileAttributes.Hidden)
-                            continue;
-                        if (!Directory.Exists(currentDir))
-                            continue;
-
-                        long length = GetDirectorySize(currentDir);
-                        if (!m_DirectorySizes.ContainsKey(currentDir))
-                            m_DirectorySizes.Add(currentDir, length);
-
-                        DirectoryInfo parent = new DirectoryInfo(currentDir).Parent;
-
-                        // Since we have to take the size of sub-folders into account the algorithm
-                        // must iterate backwards towards the parent directories and add the size of the current
-                        // directory to it.
-                        while (parent != null && !this.bgWorker.CancellationPending)
-                        {
-                            if (m_DirectorySizes.ContainsKey(parent.FullName))
-                            {
-                                m_DirectorySizes[parent.FullName] += length;
-                                parent = parent.Parent;
-                            }
-                            else
-                                break;
-                        }
-
-                        ProcessDirectory(currentDir, worker, e);
-                    }
-                }
-            }
-
-            catch (DirectoryNotFoundException)
-            {
-                MessageBox.Show("AUGH");
-            }
-
-            catch (UnauthorizedAccessException)
-            {
-            }
-
-            catch (FileNotFoundException)
-            {
-            }
-        }
-
-        private void DrawPiechart()
-        {
-            m_PieChart.Invalidate();
-        }
 
         Color[] GetColorArray()
         {
@@ -338,14 +486,43 @@ namespace Requiro
         {
             if (m_FileList.SelectedItems.Count > 0)
             {
-                m_PathBox.Text = m_FileList.SelectedItems[0].Tag.ToString();
-                StartSearch();
+                string selectedPath = m_FileList.SelectedItems[0].Tag.ToString();
+                if (Directory.Exists(selectedPath)) {
+                    m_PathBox.Text = m_FileList.SelectedItems[0].Tag.ToString();
+                    StartSearch();
+                }
             }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(linkLabel1.Text);
+            try
+            {
+                System.Diagnostics.Process.Start(linkLabel1.Text);
+            }
+            catch (Exception ex)
+            {
+                // Do nothing. If Windows Firewall blocks the start of the browser the process will not start and we ignore it.
+            }
+        }
+
+        private void BuildDirectoryData()
+        {
+            m_TotalPieSize = 0;
+            m_PieDirList.Clear();
+            // Calculate size
+            for (int c = 0; c < m_MaxDirs && c < m_FileList.Items.Count; c++)
+            {                
+                ListViewItem lvi = m_FileList.Items[c];
+                // Skip files
+                //if (!Directory.Exists(lvi.Tag.ToString()))
+                //    continue;
+                if (lvi.Text == "Parent directory")
+                    continue;
+                long size = (long)lvi.SubItems[1].Tag;
+                m_PieDirList.Add(lvi.Text, size);
+                m_TotalPieSize += size;
+            }
         }
 
         private void m_PieChart_Paint(object sender, PaintEventArgs e)
@@ -353,39 +530,39 @@ namespace Requiro
             if (!m_SearchSuccesful)
                 return;
 
+            if (m_PieChart.Size.Width == 1 || m_PieChart.Size.Height == 1)
+                return;
+
+            int boxSize = 12;
+
             Graphics g = e.Graphics;
             g.Clear(this.BackColor);
-            Pen pen = new Pen(Color.Black, 1.0f);
-            long totalSize = 0;
-            Dictionary<string, long> dirList = new Dictionary<string, long>();
-            List<float> pieslices = new List<float>(m_FileList.Items.Count);
+            Pen pen = new Pen(Color.Transparent, 1.0f);
+            
             Size sz = new Size((int)(m_PieChart.Size.Width * 0.6), (int)(m_PieChart.Size.Height * 0.9));
             Point pt = new Point(0, (int)(sz.Height * 0.05));
             Rectangle rec = new Rectangle(pt, sz);
             Random rand = new Random();
 
-            if (m_FileList.Items.Count == 0)
+            // Calculate the approximate size for the legends
+            // The font we use is 7.5 points high, the default Windows points per pixel is 96
+            // So 7.5 points is about 10 pixels, thus divide the leftover size by that
+            // Our width is the remaining drawing area plus the size of a box and 10 pixels for padding
+            int truncateLen = (int)(((sz.Width * 0.6) + boxSize + 10) / 10);
+            List<float> pieslices = new List<float>(m_MaxDirs);
+
+            if (m_FileList.Items.Count == 1)
             {
-                g.DrawString("Select a path to analyse...", new Font("Tahoma", 8.0f), new SolidBrush(Color.Black), new Point(sz.Width - 100, sz.Height - 100));
+                g.DrawString("Empty directory or no directory selected.", new Font("Tahoma", 8.0f), new SolidBrush(Color.Black), new Point(sz.Width - 130, sz.Height - 100));
                 return;
             }
 
-            // Calculate size
-            foreach (ListViewItem lvi in m_FileList.Items)
-            {
-                if (lvi.Text == "Parent directory")
-                    continue;
-                long size = (long)lvi.SubItems[1].Tag;
-                dirList.Add(lvi.Text, size);
-                totalSize += size;
-            }
-
-            // Sort the dictionary first (insignifcant directories can be left out when there's too much to draw)
-            var directories = (from entry in dirList orderby entry.Value descending select entry);
+            // Sort the dictionary first (insignificant directories can be left out when there's too much to draw)
+            var directories = (from entry in m_PieDirList orderby entry.Value descending select entry).Take(m_MaxDirs);
             // Calculate pieslices 
             foreach (KeyValuePair<string, long> kvp in directories)
             {
-                float size = (kvp.Value / (float)totalSize) * 360;
+                float size = (kvp.Value / (float)m_TotalPieSize) * 360;
                 pieslices.Add(size);
             }
             g.Clear(Mainform.DefaultBackColor);
@@ -401,14 +578,13 @@ namespace Requiro
             }
             int count = 0;
             int y = 0;
-            int boxSize = 12;
 
             // Draw Legend
             foreach (KeyValuePair<string, long> kvp in directories)
             {
-                if (count >= 16)
+                if (count >= m_MaxDirs)
                 {
-                    g.DrawString("(" + (dirList.Count - 16).ToString() + " more)", new Font("Tahoma", 7.5F), new SolidBrush(Color.Black), new Point(sz.Width + 8, y + 5));
+                    g.DrawString("(" + (m_PieDirList.Count - m_MaxDirs).ToString() + " more)", new Font("Tahoma", 7.5F), new SolidBrush(Color.Black), new Point(sz.Width + 8, y + 5));
                     break;
                 }
                 string percentage = String.Format(" - {0:P}", ((pieslices[count] / 360)));
@@ -416,10 +592,20 @@ namespace Requiro
                 Brush rectBrush = new SolidBrush(m_Colors[count]);
                 g.DrawRectangle(new Pen(Color.Black), new Rectangle(sz.Width + 10, y, boxSize, boxSize));
                 g.FillRectangle(rectBrush, sz.Width + 10, y, boxSize, boxSize);
-                g.DrawString(Truncate(kvp.Key, 15) + percentage, new Font("Tahoma", 7.5F), new SolidBrush(Color.Black), new Point(sz.Width + 25, y));
+                g.DrawString(Truncate(kvp.Key, truncateLen) + percentage, new Font("Tahoma", 7.5F), new SolidBrush(Color.Black), new Point(sz.Width + 25, y));
                 y += boxSize;
-                count += 1;
+                count++;
             }
+        }
+
+        private void m_PieChart_SizeChanged(object sender, EventArgs e)
+        {
+            m_PieChart.Refresh();
+        }
+
+        private void m_PieChart_LoadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+
         }
     }
 }

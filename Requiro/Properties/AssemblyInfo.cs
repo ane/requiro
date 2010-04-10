@@ -7,7 +7,7 @@ using System.Resources;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Requiro")]
-[assembly: AssemblyDescription("A directory size analysis tool.")]
+[assembly: AssemblyDescription("A tool for analyzing space usage on storage devices.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Antoine Kalmbach")]
 [assembly: AssemblyProduct("Requiro")]
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.3.248")]
+[assembly: AssemblyVersion("0.1.3.373")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
-[assembly: AssemblyFileVersionAttribute("0.1.3.248")]
+[assembly: AssemblyFileVersionAttribute("0.1.3.373")]
