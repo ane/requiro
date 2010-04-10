@@ -18,6 +18,7 @@ namespace Requiro
 {
     public partial class Mainform : Form
     {
+        private ListViewColumnSorter lvwColumnSorter;
         private Dictionary<string, long> m_DirectorySizes = new Dictionary<string,long>();
         private DirectoryCache m_DirectoryCache = new DirectoryCache();
         private Stopwatch m_Stopwatch = new Stopwatch();
@@ -33,7 +34,7 @@ namespace Requiro
 
         public Mainform()
         {
-            InitializeComponent();
+            InitializeComponent();   
         }
 
         private void Mainform_Load(object sender, EventArgs e)
@@ -41,7 +42,10 @@ namespace Requiro
             m_Colors = GetColorArray();
             m_Version = Assembly.GetExecutingAssembly().GetName().Version;
             m_VersionLabel.Text += " v" + m_Version.Major + "." + m_Version.Minor + "." + m_Version.Build + " (build " + m_Version.Revision + ")";
-            this.Text = String.Format("Requiro v{0}.{1}.{2}", m_Version.Major, m_Version.Minor, m_Version.Build); 
+            this.Text = String.Format("Requiro v{0}.{1}.{2}", m_Version.Major, m_Version.Minor, m_Version.Build);
+            // Create the column sorter
+            lvwColumnSorter = new ListViewColumnSorter();
+            this.m_FileList.ListViewItemSorter = lvwColumnSorter;
         }
 
         private void m_BrowseButton_Click(object sender, EventArgs e)
@@ -76,7 +80,7 @@ namespace Requiro
                 return;
             }
 
-            if (m_DirectoryCache.HasPath(m_PathBox.Text) && wantCache) 
+            if (m_DirectoryCache.HasPath(m_PathBox.Text) && wantCache)
             {
                 m_Stopwatch.Reset();
                 m_Stopwatch.Start();
@@ -166,80 +170,6 @@ namespace Requiro
                 m_DirectoryCache.AddPathFiles(m_PathBox.Text, files);
         }
 
-        private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            try
-            {
-                m_Stopwatch.Stop();
-                m_SearchSuccesful = false;
-                if (!e.Cancelled)
-                {
-                    AddParentDirectoryItem();
-                    if (m_DirectorySizes.Count == 0)
-                    {
-                        long size = AddCurrentDirectoryFiles(m_PathBox.Text);
-                        //AddFilesToCache();
-                        UpdateWithStopwatch(false);
-                        BuildTextStatistics(size);
-                        BuildDirectoryData();
-                        m_SearchSuccesful = true;
-                        m_PieChart.Refresh();
-      
-                    }
-                    else
-                    {
-                        List<string> subfolders = new List<string>();
-                        long totalSize = 0;
-                        foreach (KeyValuePair<string, long> kvp in m_DirectorySizes)
-                        {
-                            string subfolder = kvp.Key;
-                            long size = kvp.Value;
-
-                            // Remove start slash and initial path
-                            subfolder = subfolder.Replace(m_PathBox.Text, "");
-                            if (subfolder.StartsWith("\\"))
-                                subfolder = subfolder.Remove(0, 1);
-
-                            // Check if it's a direct subfolder
-                            bool matched = false;
-                            foreach (string sf in subfolders)
-                            {                              
-                                Match m = Regex.Match(subfolder, Regex.Escape(sf));
-                                //Match m = Regex.Match(subfolder, sf);
-                                if (m.Success)
-                                    matched = true;
-                            }
-                            // Not a subfolder's subfolder, so we can add it to the list of current directories
-                            if (!matched)
-                            {
-                                subfolders.Add(subfolder);
-                                AddToList(subfolder, kvp.Key, size);
-                                totalSize += size;
-                            }
-                        }
-
-                        totalSize += AddCurrentDirectoryFiles(m_PathBox.Text);
-                        UpdateWithStopwatch(false);
-
-                        BuildTextStatistics(totalSize);
-                        m_SearchSuccesful = true;
-                        m_DirectorySizes.Clear();
-                        m_MaxDirs = (int)(((m_PieChart.Size.Height - 10)) / 10);
-                        BuildDirectoryData();
-                        AddFilesToCache();
-                        m_PieChart.Refresh();
-                    }
-                    m_AnalyzeButton.Text = m_strStartAnalysis;
-                }
-            }
-
-            catch (Exception ex)
-            {
-                StopSearch();
-                ExceptionForm exfm = new ExceptionForm(ex, m_Version);
-                exfm.ShowDialog(this);   
-            }
-        }
 
         private void UpdateWithStopwatch(bool cached)
         {
@@ -363,6 +293,80 @@ namespace Requiro
             }
         }
 
+        private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            try
+            {
+                m_Stopwatch.Stop();
+                m_SearchSuccesful = false;
+                if (!e.Cancelled)
+                {
+                    AddParentDirectoryItem();
+                    if (m_DirectorySizes.Count == 0)
+                    {
+                        long size = AddCurrentDirectoryFiles(m_PathBox.Text);
+                        //AddFilesToCache();
+                        UpdateWithStopwatch(false);
+                        BuildTextStatistics(size);
+                        BuildDirectoryData();
+                        m_SearchSuccesful = true;
+                        m_PieChart.Refresh();
+                    }
+                    else
+                    {
+                        List<string> subfolders = new List<string>();
+                        long totalSize = 0;
+                        foreach (KeyValuePair<string, long> kvp in m_DirectorySizes)
+                        {
+                            string subfolder = kvp.Key;
+                            long size = kvp.Value;
+
+                            // Remove start slash and initial path
+                            subfolder = subfolder.Replace(m_PathBox.Text, "");
+                            if (subfolder.StartsWith("\\"))
+                                subfolder = subfolder.Remove(0, 1);
+
+                            // Check if it's a direct subfolder
+                            bool matched = false;
+                            foreach (string sf in subfolders)
+                            {
+                                Match m = Regex.Match(subfolder, Regex.Escape(sf));
+                                //Match m = Regex.Match(subfolder, sf);
+                                if (m.Success)
+                                    matched = true;
+                            }
+                            // Not a subfolder's subfolder, so we can add it to the list of current directories
+                            if (!matched)
+                            {
+                                subfolders.Add(subfolder);
+                                AddToList(subfolder, kvp.Key, size);
+                                totalSize += size;
+                            }
+                        }
+
+                        totalSize += AddCurrentDirectoryFiles(m_PathBox.Text);
+                        UpdateWithStopwatch(false);
+
+                        BuildTextStatistics(totalSize);
+                        m_SearchSuccesful = true;
+                        m_DirectorySizes.Clear();
+                        m_MaxDirs = (int)(((m_PieChart.Size.Height - 10)) / 10);
+                        BuildDirectoryData();
+                        AddFilesToCache();
+                        m_PieChart.Refresh();
+                    }
+                    m_AnalyzeButton.Text = m_strStartAnalysis;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                StopSearch();
+                ExceptionForm exfm = new ExceptionForm(ex, m_Version);
+                exfm.ShowDialog(this);
+            }
+        }
+
 
         private long AddCurrentDirectoryFiles(string path)
         {
@@ -396,6 +400,7 @@ namespace Requiro
                 item.SubItems[1].Tag = fileSize;
                 size += fileSize;
                 item.Tag = file.FullName;
+                item.Group = m_FileList.Groups["Files"];
 
                 this.m_FileList.Items.Add(item);
             }
@@ -412,6 +417,9 @@ namespace Requiro
                 lvi.Text = "Parent directory";
                 lvi.Tag = parentPath;
                 lvi.ImageIndex = 1;
+                lvi.SubItems.Add("");
+                lvi.SubItems[1].Tag = -1;
+                lvi.Group = m_FileList.Groups[0];
                 m_FileList.Items.Add(lvi);
             }
         }
@@ -429,6 +437,7 @@ namespace Requiro
             newItem.SubItems.Add(FormatBytes(size));
             newItem.SubItems[1].Tag = size;
             newItem.ImageIndex = 0;
+            newItem.Group = m_FileList.Groups["Directories"];
             newItem.Name = name;
 
             m_FileList.Items.Add(newItem);
@@ -445,18 +454,18 @@ namespace Requiro
 
         public string FormatBytes(long bytes)
         {
-          const int scale = 1024;
-          string[] orders = new string[] { "TB", "GB", "MB", "KB", "B" };
-          long max = (long)Math.Pow(scale, 4);
+            const int scale = 1024;
+            string[] orders = new string[] { "TB", "GB", "MB", "KB", "B" };
+            long max = (long)Math.Pow(scale, 4);
 
-          foreach (string order in orders)
-          {
-            if ( bytes > max )
-              return string.Format("{0:##.##} {1}", decimal.Divide( bytes, max ), order);
+            foreach (string order in orders)
+            {
+                if (bytes > max)
+                    return string.Format("{0:##.##} {1}", decimal.Divide(bytes, max), order);
 
-            max /= scale;
-          }
-          return "0 B";
+                max /= scale;
+            }
+            return "0 B";
         }
 
 
@@ -538,7 +547,7 @@ namespace Requiro
 
             Graphics g = e.Graphics;
             g.Clear(this.BackColor);
-            Pen pen = new Pen(Color.Transparent, 1.0f);
+            Pen pen = new Pen(Color.FromArgb(192, 0, 0, 0), 1.0f);
             
             Size sz = new Size((int)(m_PieChart.Size.Width * 0.6), (int)(m_PieChart.Size.Height * 0.9));
             Point pt = new Point(0, (int)(sz.Height * 0.05));
@@ -616,28 +625,75 @@ namespace Requiro
 
         private void m_DeleteSelectedItemButton_Click(object sender, EventArgs e)
         {
+            if (m_FileList.SelectedItems.Count == 0)
+                return;
+
             List<String> toBeDeleted = new List<String>();
-            int count = 0;
             foreach (ListViewItem lvi in m_FileList.SelectedItems)
             {
+                // Won't delete parent directory
+                if (lvi.Text == "Parent directory")
+                    continue;
                 toBeDeleted.Add(lvi.Tag.ToString());
             }
-            if (MessageBox.Show("Are you sure you want to delete these " + toBeDeleted.Count + " items? Recovery is impossible.", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to delete the " + toBeDeleted.Count + " selected item(s)? Recovery is impossible.", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                // Loop through directories to be deleted
                 foreach (string path in toBeDeleted)
                 {
-                    if (Directory.Exists(path))
+                    try
                     {
-                        DirectoryInfo di = new DirectoryInfo(path);
-                        di.Delete(true);
+                        // Can't delete a directory/file with the same call
+                        if (Directory.Exists(path))
+                        {
+                            DirectoryInfo di = new DirectoryInfo(path);
+                            di.Delete(true);
+                            // Remove from cache
+                            m_DirectoryCache.DeletePathFromPath(m_PathBox.Text, path); 
+                        }
+                        else
+                        {
+                            FileInfo fi = new FileInfo(path);
+                            fi.Delete();
+                            m_DirectoryCache.DeletePathFromPath(m_PathBox.Text, path);
+                        }
                     }
-                    else
+                    catch (UnauthorizedAccessException uae)
                     {
-                        FileInfo fi = new FileInfo(path);
-                        fi.Delete();
+                        MessageBox.Show("Unable to delete, reason: " + uae.Message, "Error when deleting", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
+            // Refresh the current view from the cache
+            StartSearch(true);
+        }
+
+        // Code source: http://support.microsoft.com/kb/319401
+        private void m_FileList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (lvwColumnSorter.Order == SortOrder.Ascending)
+                {
+                    lvwColumnSorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    lvwColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                lvwColumnSorter.SortColumn = e.Column;
+                lvwColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.m_FileList.Sort();
+
         }
     }
 }

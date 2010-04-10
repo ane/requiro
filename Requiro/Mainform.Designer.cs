@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Directories", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mainform));
             this.m_DirectoryBox = new System.Windows.Forms.GroupBox();
             this.m_PathBox = new System.Windows.Forms.ComboBox();
@@ -132,20 +134,27 @@
             this.totalSize});
             this.m_FileList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.m_FileList.FullRowSelect = true;
-            this.m_FileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            listViewGroup1.Header = "Directories";
+            listViewGroup1.Name = "Directories";
+            listViewGroup2.Header = "Files";
+            listViewGroup2.Name = "Files";
+            this.m_FileList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2});
             this.m_FileList.Location = new System.Drawing.Point(8, 85);
             this.m_FileList.Name = "m_FileList";
-            this.m_FileList.Size = new System.Drawing.Size(653, 335);
+            this.m_FileList.Size = new System.Drawing.Size(555, 335);
             this.m_FileList.SmallImageList = this.m_imageList;
             this.m_FileList.TabIndex = 6;
             this.m_FileList.UseCompatibleStateImageBehavior = false;
             this.m_FileList.View = System.Windows.Forms.View.Details;
+            this.m_FileList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.m_FileList_ColumnClick);
             this.m_FileList.DoubleClick += new System.EventHandler(this.m_FileList_Click);
             // 
             // path
             // 
             this.path.Text = "Subfolder";
-            this.path.Width = 450;
+            this.path.Width = 400;
             // 
             // totalSize
             // 
@@ -205,7 +214,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.m_PieChart.Location = new System.Drawing.Point(7, 13);
             this.m_PieChart.Name = "m_PieChart";
-            this.m_PieChart.Size = new System.Drawing.Size(455, 240);
+            this.m_PieChart.Size = new System.Drawing.Size(553, 240);
             this.m_PieChart.TabIndex = 11;
             this.m_PieChart.TabStop = false;
             this.m_PieChart.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.m_PieChart_LoadCompleted);
@@ -265,14 +274,14 @@
             this.panel2.Controls.Add(this.m_SubfoldersCount);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.m_PathLabel);
-            this.panel2.Location = new System.Drawing.Point(667, 350);
+            this.panel2.Location = new System.Drawing.Point(576, 350);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(468, 70);
+            this.panel2.Size = new System.Drawing.Size(559, 70);
             this.panel2.TabIndex = 9;
             // 
             // m_DriveSize
             // 
-            this.m_DriveSize.Location = new System.Drawing.Point(333, 22);
+            this.m_DriveSize.Location = new System.Drawing.Point(459, 22);
             this.m_DriveSize.Name = "m_DriveSize";
             this.m_DriveSize.Size = new System.Drawing.Size(67, 13);
             this.m_DriveSize.TabIndex = 13;
@@ -281,7 +290,7 @@
             // 
             // m_AvailableSpace
             // 
-            this.m_AvailableSpace.Location = new System.Drawing.Point(282, 35);
+            this.m_AvailableSpace.Location = new System.Drawing.Point(408, 35);
             this.m_AvailableSpace.Name = "m_AvailableSpace";
             this.m_AvailableSpace.Size = new System.Drawing.Size(118, 13);
             this.m_AvailableSpace.TabIndex = 12;
@@ -291,7 +300,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(230, 48);
+            this.label8.Location = new System.Drawing.Point(356, 48);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(66, 13);
             this.label8.TabIndex = 11;
@@ -300,7 +309,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(230, 22);
+            this.label7.Location = new System.Drawing.Point(356, 22);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(57, 13);
             this.label7.TabIndex = 10;
@@ -308,7 +317,7 @@
             // 
             // m_UsedSpace
             // 
-            this.m_UsedSpace.Location = new System.Drawing.Point(294, 48);
+            this.m_UsedSpace.Location = new System.Drawing.Point(420, 48);
             this.m_UsedSpace.Name = "m_UsedSpace";
             this.m_UsedSpace.Size = new System.Drawing.Size(106, 13);
             this.m_UsedSpace.TabIndex = 9;
@@ -318,7 +327,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(230, 35);
+            this.label2.Location = new System.Drawing.Point(356, 35);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 13);
             this.label2.TabIndex = 8;
@@ -328,7 +337,7 @@
             // 
             this.m_DriveInfoLabel.AutoSize = true;
             this.m_DriveInfoLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_DriveInfoLabel.Location = new System.Drawing.Point(230, 9);
+            this.m_DriveInfoLabel.Location = new System.Drawing.Point(356, 9);
             this.m_DriveInfoLabel.Name = "m_DriveInfoLabel";
             this.m_DriveInfoLabel.Size = new System.Drawing.Size(170, 13);
             this.m_DriveInfoLabel.TabIndex = 7;
@@ -376,9 +385,9 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.m_PieChart);
-            this.groupBox1.Location = new System.Drawing.Point(667, 85);
+            this.groupBox1.Location = new System.Drawing.Point(569, 85);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(468, 259);
+            this.groupBox1.Size = new System.Drawing.Size(566, 259);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             // 
@@ -407,7 +416,7 @@
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(664, 68);
+            this.label9.Location = new System.Drawing.Point(566, 68);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(64, 14);
             this.label9.TabIndex = 21;
@@ -425,7 +434,7 @@
             this.m_RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.m_RefreshButton.ImageIndex = 0;
             this.m_RefreshButton.ImageList = this.m_toolBarImages;
-            this.m_RefreshButton.Location = new System.Drawing.Point(571, 426);
+            this.m_RefreshButton.Location = new System.Drawing.Point(473, 426);
             this.m_RefreshButton.Name = "m_RefreshButton";
             this.m_RefreshButton.Size = new System.Drawing.Size(90, 25);
             this.m_RefreshButton.TabIndex = 22;
@@ -440,7 +449,7 @@
             this.m_DeleteSelectedItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.m_DeleteSelectedItemButton.ImageIndex = 1;
             this.m_DeleteSelectedItemButton.ImageList = this.m_toolBarImages;
-            this.m_DeleteSelectedItemButton.Location = new System.Drawing.Point(488, 426);
+            this.m_DeleteSelectedItemButton.Location = new System.Drawing.Point(389, 426);
             this.m_DeleteSelectedItemButton.Name = "m_DeleteSelectedItemButton";
             this.m_DeleteSelectedItemButton.Size = new System.Drawing.Size(75, 25);
             this.m_DeleteSelectedItemButton.TabIndex = 23;
@@ -470,9 +479,8 @@
             this.Controls.Add(this.m_DirectoryBox);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
             this.Name = "Mainform";
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Requiro";
             this.Load += new System.EventHandler(this.Mainform_Load);

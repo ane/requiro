@@ -6,6 +6,32 @@ using System.Windows.Forms;
 
 namespace Requiro
 {
+    class CacheFile
+    {
+        public string Path { get; set; }
+        public long   Size { get; set; }
+    }
+
+    class CacheDirectory
+    {
+        public string Path { get; set; }
+
+        public List<CacheDirectory> subDirectories { get; private set;  }
+        public List<CacheFile> subFiles { get; private set; }
+
+        // Assumes a valid path
+        private void AddFile(CacheFile cf)
+        {
+            subFiles.Add(cf);
+        }
+
+        // Ditto
+        private void AddDirectory(CacheDirectory cd)
+        {
+            subDirectories.Add(cd);
+        }
+    }  
+
     class DirectoryCache
     {
         private Dictionary<string, Dictionary<string, long>> m_Cache;
@@ -22,6 +48,19 @@ namespace Requiro
                 m_Cache.Add(fullPath, directoryFiles);
             }
         }
+
+        public void DeletePathFromPath(string parentPath, string childPath)
+        {
+            if (m_Cache.ContainsKey(parentPath))
+            {
+                if (m_Cache[parentPath].ContainsKey(childPath))
+                {
+                    m_Cache[parentPath].Remove(childPath);
+                }
+            }
+        }
+
+
 
         public Dictionary<string, long> GetPathFiles(string fullPath)
         {
