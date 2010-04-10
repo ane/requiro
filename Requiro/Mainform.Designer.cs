@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mainform));
             this.m_DirectoryBox = new System.Windows.Forms.GroupBox();
+            this.m_PathBox = new System.Windows.Forms.ComboBox();
             this.m_AnalyzeButton = new System.Windows.Forms.Button();
             this.m_BrowseButton = new System.Windows.Forms.Button();
             this.m_FileList = new System.Windows.Forms.ListView();
@@ -61,10 +62,10 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.m_RefreshCurrentDirButton = new System.Windows.Forms.Button();
-            this.m_DeleteSelectedDirectoryButton = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
-            this.m_PathBox = new System.Windows.Forms.ComboBox();
+            this.m_toolBarImages = new System.Windows.Forms.ImageList(this.components);
+            this.m_RefreshButton = new System.Windows.Forms.Button();
+            this.m_DeleteSelectedItemButton = new System.Windows.Forms.Button();
             this.m_DirectoryBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_PieChart)).BeginInit();
             this.panel2.SuspendLayout();
@@ -84,6 +85,18 @@
             this.m_DirectoryBox.TabIndex = 0;
             this.m_DirectoryBox.TabStop = false;
             this.m_DirectoryBox.Text = "Full path to target directory";
+            // 
+            // m_PathBox
+            // 
+            this.m_PathBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_PathBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.m_PathBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
+            this.m_PathBox.FormattingEnabled = true;
+            this.m_PathBox.Location = new System.Drawing.Point(6, 20);
+            this.m_PathBox.Name = "m_PathBox";
+            this.m_PathBox.Size = new System.Drawing.Size(942, 21);
+            this.m_PathBox.TabIndex = 3;
             // 
             // m_AnalyzeButton
             // 
@@ -120,15 +133,14 @@
             this.m_FileList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.m_FileList.FullRowSelect = true;
             this.m_FileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.m_FileList.Location = new System.Drawing.Point(8, 90);
-            this.m_FileList.MultiSelect = false;
+            this.m_FileList.Location = new System.Drawing.Point(8, 85);
             this.m_FileList.Name = "m_FileList";
-            this.m_FileList.Size = new System.Drawing.Size(653, 330);
+            this.m_FileList.Size = new System.Drawing.Size(653, 335);
             this.m_FileList.SmallImageList = this.m_imageList;
             this.m_FileList.TabIndex = 6;
             this.m_FileList.UseCompatibleStateImageBehavior = false;
             this.m_FileList.View = System.Windows.Forms.View.Details;
-            this.m_FileList.Click += new System.EventHandler(this.m_FileList_Click);
+            this.m_FileList.DoubleClick += new System.EventHandler(this.m_FileList_Click);
             // 
             // path
             // 
@@ -228,7 +240,7 @@
             // 
             this.m_StatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.m_StatusLabel.AutoSize = true;
-            this.m_StatusLabel.Location = new System.Drawing.Point(5, 433);
+            this.m_StatusLabel.Location = new System.Drawing.Point(5, 432);
             this.m_StatusLabel.Name = "m_StatusLabel";
             this.m_StatusLabel.Size = new System.Drawing.Size(107, 13);
             this.m_StatusLabel.TabIndex = 14;
@@ -384,54 +396,59 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(5, 72);
+            this.label4.Location = new System.Drawing.Point(5, 68);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(93, 14);
             this.label4.TabIndex = 18;
             this.label4.Text = "Search results";
-            // 
-            // m_RefreshCurrentDirButton
-            // 
-            this.m_RefreshCurrentDirButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_RefreshCurrentDirButton.Location = new System.Drawing.Point(504, 426);
-            this.m_RefreshCurrentDirButton.Name = "m_RefreshCurrentDirButton";
-            this.m_RefreshCurrentDirButton.Size = new System.Drawing.Size(75, 27);
-            this.m_RefreshCurrentDirButton.TabIndex = 19;
-            this.m_RefreshCurrentDirButton.Text = "Refresh";
-            this.m_RefreshCurrentDirButton.UseVisualStyleBackColor = true;
-            // 
-            // m_DeleteSelectedDirectoryButton
-            // 
-            this.m_DeleteSelectedDirectoryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_DeleteSelectedDirectoryButton.Location = new System.Drawing.Point(586, 426);
-            this.m_DeleteSelectedDirectoryButton.Name = "m_DeleteSelectedDirectoryButton";
-            this.m_DeleteSelectedDirectoryButton.Size = new System.Drawing.Size(75, 27);
-            this.m_DeleteSelectedDirectoryButton.TabIndex = 20;
-            this.m_DeleteSelectedDirectoryButton.Text = "Delete";
-            this.m_DeleteSelectedDirectoryButton.UseVisualStyleBackColor = true;
             // 
             // label9
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(664, 72);
+            this.label9.Location = new System.Drawing.Point(664, 68);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(64, 14);
             this.label9.TabIndex = 21;
             this.label9.Text = "Statistics";
             // 
-            // m_PathBox
+            // m_toolBarImages
             // 
-            this.m_PathBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_PathBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.m_PathBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
-            this.m_PathBox.FormattingEnabled = true;
-            this.m_PathBox.Location = new System.Drawing.Point(6, 20);
-            this.m_PathBox.Name = "m_PathBox";
-            this.m_PathBox.Size = new System.Drawing.Size(942, 21);
-            this.m_PathBox.TabIndex = 3;
+            this.m_toolBarImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_toolBarImages.ImageStream")));
+            this.m_toolBarImages.TransparentColor = System.Drawing.Color.Transparent;
+            this.m_toolBarImages.Images.SetKeyName(0, "arrow_refresh.png");
+            this.m_toolBarImages.Images.SetKeyName(1, "delete.png");
+            // 
+            // m_RefreshButton
+            // 
+            this.m_RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_RefreshButton.ImageIndex = 0;
+            this.m_RefreshButton.ImageList = this.m_toolBarImages;
+            this.m_RefreshButton.Location = new System.Drawing.Point(571, 426);
+            this.m_RefreshButton.Name = "m_RefreshButton";
+            this.m_RefreshButton.Size = new System.Drawing.Size(90, 25);
+            this.m_RefreshButton.TabIndex = 22;
+            this.m_RefreshButton.Text = "Refresh";
+            this.m_RefreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.m_RefreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.m_RefreshButton.UseVisualStyleBackColor = true;
+            this.m_RefreshButton.Click += new System.EventHandler(this.m_RefreshButton_Click);
+            // 
+            // m_DeleteSelectedItemButton
+            // 
+            this.m_DeleteSelectedItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_DeleteSelectedItemButton.ImageIndex = 1;
+            this.m_DeleteSelectedItemButton.ImageList = this.m_toolBarImages;
+            this.m_DeleteSelectedItemButton.Location = new System.Drawing.Point(488, 426);
+            this.m_DeleteSelectedItemButton.Name = "m_DeleteSelectedItemButton";
+            this.m_DeleteSelectedItemButton.Size = new System.Drawing.Size(75, 25);
+            this.m_DeleteSelectedItemButton.TabIndex = 23;
+            this.m_DeleteSelectedItemButton.Text = "Delete";
+            this.m_DeleteSelectedItemButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.m_DeleteSelectedItemButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.m_DeleteSelectedItemButton.UseVisualStyleBackColor = true;
+            this.m_DeleteSelectedItemButton.Click += new System.EventHandler(this.m_DeleteSelectedItemButton_Click);
             // 
             // Mainform
             // 
@@ -439,9 +456,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1144, 460);
+            this.Controls.Add(this.m_DeleteSelectedItemButton);
+            this.Controls.Add(this.m_RefreshButton);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.m_DeleteSelectedDirectoryButton);
-            this.Controls.Add(this.m_RefreshCurrentDirButton);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
@@ -502,10 +519,11 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label m_DriveInfoLabel;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button m_RefreshCurrentDirButton;
-        private System.Windows.Forms.Button m_DeleteSelectedDirectoryButton;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox m_PathBox;
+        private System.Windows.Forms.ImageList m_toolBarImages;
+        private System.Windows.Forms.Button m_RefreshButton;
+        private System.Windows.Forms.Button m_DeleteSelectedItemButton;
     }
 }
 

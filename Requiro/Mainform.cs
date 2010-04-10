@@ -52,10 +52,10 @@ namespace Requiro
 
         private void m_AnalyzeButton_Click(object sender, EventArgs e)
         {
-            StartSearch();
+            StartSearch(true);
         }
 
-        private void StartSearch()
+        private void StartSearch(bool wantCache)
         {
             ToolTip tip = new ToolTip();
 
@@ -76,7 +76,7 @@ namespace Requiro
                 return;
             }
 
-            if (m_DirectoryCache.HasPath(m_PathBox.Text))
+            if (m_DirectoryCache.HasPath(m_PathBox.Text) && wantCache) 
             {
                 m_Stopwatch.Reset();
                 m_Stopwatch.Start();
@@ -85,7 +85,7 @@ namespace Requiro
             }
 
             m_FileList.Items.Clear();
-            //m_DirectorySizes.Clear();
+            m_DirectorySizes.Clear();
             m_StatusLabel.Text = "Starting analysis...";
             m_AnalyzeButton.Text = m_strStopAnalysis;
             bgWorker.RunWorkerAsync(m_PathBox.Text);
@@ -142,9 +142,10 @@ namespace Requiro
                 totalSize += size;
             }
 
-            AddCurrentDirectoryFiles(m_PathBox.Text);
+            totalSize += AddCurrentDirectoryFiles(m_PathBox.Text);
             BuildDirectoryData();
             BuildTextStatistics(totalSize);
+            m_SearchSuccesful = true;
             m_PieChart.Refresh();
             UpdateWithStopwatch(true);
         }
@@ -181,8 +182,9 @@ namespace Requiro
                         UpdateWithStopwatch(false);
                         BuildTextStatistics(size);
                         BuildDirectoryData();
+                        m_SearchSuccesful = true;
                         m_PieChart.Refresh();
-                        MessageBox.Show("Pluts");
+      
                     }
                     else
                     {
@@ -489,7 +491,7 @@ namespace Requiro
                 string selectedPath = m_FileList.SelectedItems[0].Tag.ToString();
                 if (Directory.Exists(selectedPath)) {
                     m_PathBox.Text = m_FileList.SelectedItems[0].Tag.ToString();
-                    StartSearch();
+                    StartSearch(true);
                 }
             }
         }
@@ -510,7 +512,6 @@ namespace Requiro
         {
             m_TotalPieSize = 0;
             m_PieDirList.Clear();
-            // Calculate size
             for (int c = 0; c < m_MaxDirs && c < m_FileList.Items.Count; c++)
             {                
                 ListViewItem lvi = m_FileList.Items[c];
@@ -606,6 +607,37 @@ namespace Requiro
         private void m_PieChart_LoadCompleted(object sender, AsyncCompletedEventArgs e)
         {
 
+        }
+
+        private void m_RefreshButton_Click(object sender, EventArgs e)
+        {
+            StartSearch(false);
+        }
+
+        private void m_DeleteSelectedItemButton_Click(object sender, EventArgs e)
+        {
+            List<String> toBeDeleted = new List<String>();
+            int count = 0;
+            foreach (ListViewItem lvi in m_FileList.SelectedItems)
+            {
+                toBeDeleted.Add(lvi.Tag.ToString());
+            }
+            if (MessageBox.Show("Are you sure you want to delete these " + toBeDeleted.Count + " items? Recovery is impossible.", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                foreach (string path in toBeDeleted)
+                {
+                    if (Directory.Exists(path))
+                    {
+                        DirectoryInfo di = new DirectoryInfo(path);
+                        di.Delete(true);
+                    }
+                    else
+                    {
+                        FileInfo fi = new FileInfo(path);
+                        fi.Delete();
+                    }
+                }
+            }
         }
     }
 }
