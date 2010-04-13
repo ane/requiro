@@ -39,13 +39,15 @@
             this.m_Message = new System.Windows.Forms.TextBox();
             this.m_ProgramVersion = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.warningIcon = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.warningIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(12, 40);
+            this.label1.Location = new System.Drawing.Point(12, 45);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(453, 48);
+            this.label1.Size = new System.Drawing.Size(453, 47);
             this.label1.TabIndex = 0;
             this.label1.Text = resources.GetString("label1.Text");
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -126,17 +128,27 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(10, 15);
+            this.label4.Location = new System.Drawing.Point(52, 13);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(334, 25);
             this.label4.TabIndex = 11;
             this.label4.Text = "Everything\'s shiny, Cap\'n. Not to fret!";
+            // 
+            // warningIcon
+            // 
+            this.warningIcon.Location = new System.Drawing.Point(14, 9);
+            this.warningIcon.Name = "warningIcon";
+            this.warningIcon.Size = new System.Drawing.Size(40, 44);
+            this.warningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.warningIcon.TabIndex = 12;
+            this.warningIcon.TabStop = false;
             // 
             // ExceptionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 541);
+            this.Controls.Add(this.warningIcon);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.m_ProgramVersion);
             this.Controls.Add(this.m_Message);
@@ -155,6 +167,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Oops! Something weird happened...";
             this.Load += new System.EventHandler(this.ExceptionForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.warningIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,5 +185,6 @@
         private System.Windows.Forms.TextBox m_Message;
         private System.Windows.Forms.Label m_ProgramVersion;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.PictureBox warningIcon;
     }
 }

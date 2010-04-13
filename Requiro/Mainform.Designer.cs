@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Directories", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Directories", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Files", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mainform));
             this.m_DirectoryBox = new System.Windows.Forms.GroupBox();
             this.m_PathBox = new System.Windows.Forms.ComboBox();
@@ -61,7 +61,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.m_PathLabel = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -71,7 +70,6 @@
             this.m_DirectoryBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_PieChart)).BeginInit();
             this.panel2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_DirectoryBox
@@ -92,7 +90,7 @@
             // 
             this.m_PathBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_PathBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.m_PathBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.m_PathBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
             this.m_PathBox.FormattingEnabled = true;
             this.m_PathBox.Location = new System.Drawing.Point(6, 20);
@@ -134,13 +132,13 @@
             this.totalSize});
             this.m_FileList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.m_FileList.FullRowSelect = true;
-            listViewGroup3.Header = "Directories";
-            listViewGroup3.Name = "Directories";
-            listViewGroup4.Header = "Files";
-            listViewGroup4.Name = "Files";
+            listViewGroup1.Header = "Directories";
+            listViewGroup1.Name = "Directories";
+            listViewGroup2.Header = "Files";
+            listViewGroup2.Name = "Files";
             this.m_FileList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup1,
+            listViewGroup2});
             this.m_FileList.Location = new System.Drawing.Point(8, 85);
             this.m_FileList.Name = "m_FileList";
             this.m_FileList.Size = new System.Drawing.Size(552, 374);
@@ -149,7 +147,7 @@
             this.m_FileList.UseCompatibleStateImageBehavior = false;
             this.m_FileList.View = System.Windows.Forms.View.Details;
             this.m_FileList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.m_FileList_ColumnClick);
-            this.m_FileList.DoubleClick += new System.EventHandler(this.m_FileList_Click);
+            this.m_FileList.DoubleClick += new System.EventHandler(this.m_FileList_DoubleClick);
             // 
             // path
             // 
@@ -209,12 +207,11 @@
             // 
             // m_PieChart
             // 
-            this.m_PieChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
+            this.m_PieChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_PieChart.Location = new System.Drawing.Point(7, 13);
+            this.m_PieChart.Location = new System.Drawing.Point(566, 85);
             this.m_PieChart.Name = "m_PieChart";
-            this.m_PieChart.Size = new System.Drawing.Size(483, 279);
+            this.m_PieChart.Size = new System.Drawing.Size(496, 298);
             this.m_PieChart.TabIndex = 11;
             this.m_PieChart.TabStop = false;
             this.m_PieChart.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.m_PieChart_LoadCompleted);
@@ -380,17 +377,6 @@
             this.m_PathLabel.TabIndex = 0;
             this.m_PathLabel.Text = "Info for: <no directory selected>";
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.m_PieChart);
-            this.groupBox1.Location = new System.Drawing.Point(566, 85);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(496, 298);
-            this.groupBox1.TabIndex = 15;
-            this.groupBox1.TabStop = false;
-            // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -465,12 +451,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1071, 499);
+            this.Controls.Add(this.m_PieChart);
             this.Controls.Add(this.m_DeleteSelectedItemButton);
             this.Controls.Add(this.m_RefreshButton);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.m_StatusLabel);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.m_VersionLabel);
@@ -488,7 +474,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.m_PieChart)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -517,7 +502,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label m_PathLabel;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label m_DriveSize;
         private System.Windows.Forms.Label m_AvailableSpace;

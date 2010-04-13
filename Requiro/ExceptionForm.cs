@@ -23,7 +23,7 @@ namespace Requiro
 
         private void ExceptionForm_Load(object sender, EventArgs e)
         {
-
+            warningIcon.Image = SystemIcons.Warning.ToBitmap();
         }
     }
 }
